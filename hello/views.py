@@ -1,15 +1,19 @@
-import telebot
+import requests
 
 from boto.s3.connection import S3Connection
 token = S3Connection(os.environ['TOKEN'])
-bot = telebot.TeleBot(token)
+url = "https://api.telegram.org/bot" + token + "/"
 
-@bot.message_handler(content_types=["text"])
-def repeat_all_messages(message): 
-    bot.send_message(message.chat.id, message.text)
 
-if __name__ == '__main__':
-     bot.polling(none_stop=True)
+def get_updates_json(request):  
+    response = requests.get(request + 'getUpdates')
+    return response.json()
+
+
+def last_update(data):  
+    results = data['result']
+    total_updates = len(results) - 1
+    return results[total_updates]
         
         
 
